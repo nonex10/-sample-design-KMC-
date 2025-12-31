@@ -1,0 +1,917 @@
+<!-- <!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>विपद व्यवस्थापन विभाग - Program Hierarchy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #718096;
+            font-size: 1.2em;
+        }
+
+        .main-program {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .main-program:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+        }
+
+        .main-program-title {
+            font-size: 1.5em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .main-program-title.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .program-card {
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .program-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left-color: #764ba2;
+        }
+
+        .program-name {
+            font-size: 1.1em;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .indicators {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .indicator-label {
+            font-weight: 600;
+            color: #4a5568;
+            min-width: 50px;
+        }
+
+        .indicator-value {
+            background: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .sdg { border-left: 3px solid #00a8e1; }
+        .iso { border-left: 3px solid #ff6b6b; }
+        .sci { border-left: 3px solid #51cf66; }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .programs-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .programs-content.expanded {
+            max-height: 10000px;
+        }
+
+        @media (max-width: 768px) {
+            .programs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️विभाग: विपद व्यवस्थापन विभाग</h1>
+            <div class="subtitle">सुशासन तथा अन्तरसम्बन्धित क्षेत्र - विपद व्यवस्थापन</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalPrograms">0</div>
+                    <div class="stat-label">Total Programs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalMainPrograms">0</div>
+                    <div class="stat-label">Main Categories</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="content"></div>
+    </div>
+
+    <script>
+        const data = {
+          department: "विपद व्यवस्थापन विभाग",
+          sector: "सुशासन तथा अन्तरसम्बन्धित क्षेत्र",
+          subSector: "विपद व्यवस्थापन",
+          mainProgram: [
+            {
+              title: "विविध आकस्मिक डुबान व्यवस्थापन कार्यक्रम",
+              programs: [
+                { name: "उत्कृष्ट कर्मचारी नगद पुरस्कार तथा सम्मान", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "उत्कृष्ट नागरिक/महानगरवासी सम्मान कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "विपद व्यवस्थापन कर्मचारी बिमा तथा जोखिम भत्ता", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "अन्तराष्ट्रिय विपद व्यवस्थापन सामग्री शुल्क", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } },
+                { name: "भूकम्प स्मृति सभा", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "भूकम्प स्मृति दिवस", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "अवलोकन भ्रमण कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "N/A", indicator: "N/A" } },
+                { name: "राष्ट्रिय तथा अन्तराष्ट्रिय सहकार्य", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "विद्धार्थीहरुका लागि विपद् व्यवस्थापन सम्बन्धित स्रोत सामग्री तयारी", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "वडा दशैं तथा चैते दशैं मौलो पूजा तथा चाडपर्व खर्च", sdg: { goal: "Goal 11", target: "11.4", indicator: "11.4.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "स्थानीय विपद् तथा जलवायु उत्थानशील कार्यढाँचा", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } },
+                { name: "सरोकारवालाहरुसंग छलफल कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "बारुण यन्त्र खरिद तथा मर्मत कार्यक्रम",
+              programs: [
+                { name: "Fire Extinguisher Refilling तथा मर्मत", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "Dry Riser Pipe मर्मत", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "Search and Rescue (SR) सवारी साधन खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "अग्नी नियन्त्रणको लागि ल्याडर खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "बारुणयन्त्र (दमकल) खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "10", indicator: "N/A" } },
+                { name: "Fire Extinguisher खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "Fire Hydrant खरिद तथा पाइप लाईन विस्तार", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "Dry Riser Pipe Installation तथा Accessories", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "स्थानीय स्तर विपद् पूर्व तयारी तथा प्रतिकार्य कार्यक्रम",
+              programs: [
+                { name: "स्थानीय स्तर विपद व्यवस्थापन तालिम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "10.4" }, sci: { pillar: "4", component: "3", indicator: "I‑082" } },
+                { name: "कर्मचारी विपद व्यवस्थापन तालिम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "10.4" }, sci: { pillar: "4", component: "3", indicator: "I‑082" } },
+                { name: "विपद सचेतना कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "आगलागी नियन्त्रण सचेतना कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "वडा विपद प्रतिकार्य तालिम तथा Simulation Drill", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "4", component: "3", indicator: "I‑082" } },
+                { name: "बाढीबाट उद्धारका लागि प्रयोग हुने डुङ्गा खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "10", indicator: "N/A" } },
+                { name: "Portable Light Tower खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "Portable Generators खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "पानी तान्ने पम्प खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "अग्नी नियन्त्रण पोशाक खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "Search and Rescue (SR), Demolish Equipment खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "विपद जोखिमका लागि पूर्व सूचना प्रणाली", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "Early Warning", indicator: "I-031" }, sci: { pillar: "2", component: "7", indicator: "I-031" } },
+                { name: "ओभर हेड ट्याङ्की Pilot Project", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "विपद् पूर्व तयारी, खोज तथा उद्धार, राहत सामाग्रीको पूर्व भण्डारण कार्यक्रम",
+              programs: [
+                { name: "त्रिपाल खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "ब्ल्याङ्केट खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑032" } },
+                { name: "विपद् व्यवस्थापन कोष (विपद् कोष स्थापना तथा सञ्चालन)", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "बारुण यन्त्र सञ्चालन तथा सुदृढीकरण कार्यक्रम",
+              programs: [
+                { name: "दमकल भवनहरुमा पानी आपूर्ति", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "दमकल भवनहरुको मर्मत संभार", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "विविध सरसफाई तथा वातावरणीय व्यवस्थापन कार्यक्रमम",
+              programs: [
+                { name: "विपद् व्यवस्थापन विशेष सरसफाई जनशक्ति", sdg: { goal: "Goal 11", target: "11.6", indicator: "11.6.1" }, iso: { theme: "Waste Management", indicator: "I-045" }, sci: { pillar: "3", component: "3", indicator: "I-045" } },
+                { name: "ढल तथा संरचना सरसफाई (श्रम बैंक)", sdg: { goal: "Goal 11", target: "11.6", indicator: "11.6.1" }, iso: { theme: "Waste Management", indicator: "I-045" }, sci: { pillar: "3", component: "3", indicator: "I-045" } },
+                { name: "सरसफाई सामग्री खरिद", sdg: { goal: "Goal 11", target: "11.6", indicator: "11.6.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "विविध आकस्मिक डुबान व्यवस्थापन कार्यक्रम",
+              programs: [
+                { name: "आकस्मिक डुबान समाधान कार्यक्रम", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } },
+                { name: "डुबान समाधान औजार उपकरण खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } },
+                { name: "डुबान प्रभावित क्षेत्रको वैज्ञानिक नक्सांकन", sdg: { goal: "Goal 11", target: "11.5 + 11.b", indicator: "11.5.1 / 11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } }
+              ]
+            }
+          ]
+        };
+
+        let totalPrograms = 0;
+        data.mainProgram.forEach(mp => totalPrograms += mp.programs.length);
+        
+        document.getElementById('totalPrograms').textContent = totalPrograms;
+        document.getElementById('totalMainPrograms').textContent = data.mainProgram.length;
+
+        const content = document.getElementById('content');
+
+        data.mainProgram.forEach((mainProg, index) => {
+            const mainDiv = document.createElement('div');
+            mainDiv.className = 'main-program';
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'main-program-title';
+            titleDiv.innerHTML = `
+                <span>${index + 1}. ${mainProg.title}</span>
+                <span class="toggle-icon">▼</span>
+            `;
+            
+            const programsContent = document.createElement('div');
+            programsContent.className = 'programs-content expanded';
+            
+            const programsGrid = document.createElement('div');
+            programsGrid.className = 'programs-grid';
+            
+            mainProg.programs.forEach(prog => {
+                const card = document.createElement('div');
+                card.className = 'program-card';
+                card.innerHTML = `
+                    <div class="program-name">${prog.name}</div>
+                    <div class="indicators">
+                        <div class="indicator sdg">
+                            <span class="indicator-label">SDG:</span>
+                            <span class="indicator-value">${prog.sdg.target}</span>
+                        </div>
+                        <div class="indicator iso">
+                            <span class="indicator-label">ISO:</span>
+                            <span class="indicator-value">${prog.iso.theme !== 'N/A' ? prog.iso.theme : prog.iso.indicator}</span>
+                        </div>
+                        <div class="indicator sci">
+                            <span class="indicator-label">SCI:</span>
+                            <span class="indicator-value">P${prog.sci.pillar}${prog.sci.component !== 'N/A' ? '-C' + prog.sci.component : ''}</span>
+                        </div>
+                    </div>
+                `;
+                programsGrid.appendChild(card);
+            });
+            
+            programsContent.appendChild(programsGrid);
+            mainDiv.appendChild(titleDiv);
+            mainDiv.appendChild(programsContent);
+            content.appendChild(mainDiv);
+            
+            titleDiv.addEventListener('click', () => {
+                titleDiv.classList.toggle('collapsed');
+                programsContent.classList.toggle('expanded');
+            });
+        });
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>विपद व्यवस्थापन विभाग - Program Hierarchy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #718096;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .main-program {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .main-program-title {
+            font-size: 1.5em;
+            color: white;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .main-program-title:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+            font-size: 0.8em;
+        }
+
+        .main-program-title.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .programs-content {
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .programs-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .program-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .program-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-left-color: #764ba2;
+        }
+
+        .program-name {
+            font-size: 1.15em;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 18px;
+            line-height: 1.4;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .indicators-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .indicator-group {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .indicator-group.sdg {
+            border-left: 4px solid #00a8e1;
+        }
+
+        .indicator-group.iso {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .indicator-group.sci {
+            border-left: 4px solid #51cf66;
+        }
+
+        .indicator-header {
+            font-weight: 700;
+            font-size: 0.85em;
+            color: #4a5568;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .indicator-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .indicator-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .indicator-label {
+            font-weight: 600;
+            color: #718096;
+            min-width: 80px;
+        }
+
+        .indicator-value {
+            background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
+            padding: 4px 10px;
+            border-radius: 15px;
+            color: #495057;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .indicator-value.highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .na-value {
+            color: #adb5bd;
+            font-style: italic;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1em;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .legend {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .legend-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .legend-color.sdg { background: #00a8e1; }
+        .legend-color.iso { background: #ff6b6b; }
+        .legend-color.sci { background: #51cf66; }
+
+        @media (max-width: 768px) {
+            .programs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .legend-items {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ विभाग: विपद व्यवस्थापन विभाग</h1>
+            <div class="subtitle">सुशासन तथा अन्तरसम्बन्धित क्षेत्र - विपद व्यवस्थापन</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalPrograms">0</div>
+                    <div class="stat-label">कुल कार्यक्रमहरू</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalMainPrograms">0</div>
+                    <div class="stat-label">मुख्य वर्गहरू</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-title">📊 सूचक प्रकारहरू</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color sdg"></div>
+                    <span><strong>SDG:</strong> Sustainable Development Goals</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color iso"></div>
+                    <span><strong>ISO:</strong> International Standards</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color sci"></div>
+                    <span><strong>SCI:</strong> Smart City Indicators</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 कार्यक्रम खोज्नुहोस्...">
+        </div>
+
+        <div id="content"></div>
+    </div>
+
+    <script>
+        const data = {
+          department: "विपद व्यवस्थापन विभाग",
+          sector: "सुशासन तथा अन्तरसम्बन्धित क्षेत्र",
+          subSector: "विपद व्यवस्थापन",
+          mainProgram: [
+            {
+              title: "विविध आकस्मिक डुबान व्यवस्थापन कार्यक्रम",
+              programs: [
+                { name: "उत्कृष्ट कर्मचारी नगद पुरस्कार तथा सम्मान", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "उत्कृष्ट नागरिक/महानगरवासी सम्मान कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "विपद व्यवस्थापन कर्मचारी बिमा तथा जोखिम भत्ता", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "अन्तराष्ट्रिय विपद व्यवस्थापन सामग्री शुल्क", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } },
+                { name: "भूकम्प स्मृति सभा", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "भूकम्प स्मृति दिवस", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "अवलोकन भ्रमण कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "N/A", indicator: "N/A" } },
+                { name: "राष्ट्रिय तथा अन्तराष्ट्रिय सहकार्य", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "विद्धार्थीहरुका लागि विपद् व्यवस्थापन सम्बन्धित स्रोत सामग्री तयारी", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "वडा दशैं तथा चैते दशैं मौलो पूजा तथा चाडपर्व खर्च", sdg: { goal: "Goal 11", target: "11.4", indicator: "11.4.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "स्थानीय विपद् तथा जलवायु उत्थानशील कार्यढाँचा", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } },
+                { name: "सरोकारवालाहरुसंग छलफल कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "बारुण यन्त्र खरिद तथा मर्मत कार्यक्रम",
+              programs: [
+                { name: "Fire Extinguisher Refilling तथा मर्मत", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "Dry Riser Pipe मर्मत", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "Search and Rescue (SR) सवारी साधन खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "अग्नी नियन्त्रणको लागि ल्याडर खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "बारुणयन्त्र (दमकल) खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "10", indicator: "N/A" } },
+                { name: "Fire Extinguisher खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "Fire Hydrant खरिद तथा पाइप लाईन विस्तार", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } },
+                { name: "Dry Riser Pipe Installation तथा Accessories", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "स्थानीय स्तर विपद् पूर्व तयारी तथा प्रतिकार्य कार्यक्रम",
+              programs: [
+                { name: "स्थानीय स्तर विपद व्यवस्थापन तालिम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "10.4" }, sci: { pillar: "4", component: "3", indicator: "I‑082" } },
+                { name: "कर्मचारी विपद व्यवस्थापन तालिम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "10.4" }, sci: { pillar: "4", component: "3", indicator: "I‑082" } },
+                { name: "विपद सचेतना कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "आगलागी नियन्त्रण सचेतना कार्यक्रम", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "वडा विपद प्रतिकार्य तालिम तथा Simulation Drill", sdg: { goal: "Goal 11", target: "11.b", indicator: "11.b.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "4", component: "3", indicator: "I‑082" } },
+                { name: "बाढीबाट उद्धारका लागि प्रयोग हुने डुङ्गा खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "10", indicator: "N/A" } },
+                { name: "Portable Light Tower खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "Portable Generators खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "पानी तान्ने पम्प खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "अग्नी नियन्त्रण पोशाक खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "Search and Rescue (SR), Demolish Equipment खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "विपद जोखिमका लागि पूर्व सूचना प्रणाली", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.1" }, iso: { theme: "Early Warning", indicator: "I-031" }, sci: { pillar: "2", component: "7", indicator: "I-031" } },
+                { name: "ओभर हेड ट्याङ्की Pilot Project", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "विपद् पूर्व तयारी, खोज तथा उद्धार, राहत सामाग्रीको पूर्व भण्डारण कार्यक्रम",
+              programs: [
+                { name: "त्रिपाल खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑031" } },
+                { name: "ब्ल्याङ्केट खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "I‑032" } },
+                { name: "विपद् व्यवस्थापन कोष (विपद् कोष स्थापना तथा सञ्चालन)", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "बारुण यन्त्र सञ्चालन तथा सुदृढीकरण कार्यक्रम",
+              programs: [
+                { name: "दमकल भवनहरुमा पानी आपूर्ति", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "3", component: "N/A", indicator: "N/A" } },
+                { name: "दमकल भवनहरुको मर्मत संभार", sdg: { goal: "Goal 11", target: "11.c", indicator: "11.c.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "विविध सरसफाई तथा वातावरणीय व्यवस्थापन कार्यक्रमम",
+              programs: [
+                { name: "विपद् व्यवस्थापन विशेष सरसफाई जनशक्ति", sdg: { goal: "Goal 11", target: "11.6", indicator: "11.6.1" }, iso: { theme: "Waste Management", indicator: "I-045" }, sci: { pillar: "3", component: "3", indicator: "I-045" } },
+                { name: "ढल तथा संरचना सरसफाई (श्रम बैंक)", sdg: { goal: "Goal 11", target: "11.6", indicator: "11.6.1" }, iso: { theme: "Waste Management", indicator: "I-045" }, sci: { pillar: "3", component: "3", indicator: "I-045" } },
+                { name: "सरसफाई सामग्री खरिद", sdg: { goal: "Goal 11", target: "11.6", indicator: "11.6.1" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "N/A", component: "N/A", indicator: "N/A" } }
+              ]
+            },
+            {
+              title: "विविध आकस्मिक डुबान व्यवस्थापन कार्यक्रम",
+              programs: [
+                { name: "आकस्मिक डुबान समाधान कार्यक्रम", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } },
+                { name: "डुबान समाधान औजार उपकरण खरिद", sdg: { goal: "Goal 11", target: "11.5", indicator: "11.5.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } },
+                { name: "डुबान प्रभावित क्षेत्रको वैज्ञानिक नक्सांकन", sdg: { goal: "Goal 11", target: "11.5 + 11.b", indicator: "11.5.1 / 11.b.2" }, iso: { theme: "N/A", indicator: "N/A" }, sci: { pillar: "2", component: "7", indicator: "N/A" } }
+              ]
+            }
+          ]
+        };
+
+        let totalPrograms = 0;
+        data.mainProgram.forEach(mp => totalPrograms += mp.programs.length);
+        
+        document.getElementById('totalPrograms').textContent = totalPrograms;
+        document.getElementById('totalMainPrograms').textContent = data.mainProgram.length;
+
+        const content = document.getElementById('content');
+
+        function createProgramCard(prog) {
+            const card = document.createElement('div');
+            card.className = 'program-card';
+            
+            const isNA = (val) => val === 'N/A' || !val;
+            
+            card.innerHTML = `
+                <div class="program-name">${prog.name}</div>
+                <div class="indicators-section">
+                    <div class="indicator-group sdg">
+                        <div class="indicator-header">🌍 SDG (Sustainable Development Goals)</div>
+                        <div class="indicator-details">
+                            <div class="indicator-row">
+                                <span class="indicator-label">Goal:</span>
+                                <span class="indicator-value ${!isNA(prog.sdg.goal) ? 'highlight' : ''}">${prog.sdg.goal || 'N/A'}</span>
+                            </div>
+                            <div class="indicator-row">
+                                <span class="indicator-label">Target:</span>
+                                <span class="indicator-value ${!isNA(prog.sdg.target) ? 'highlight' : ''}">${prog.sdg.target || 'N/A'}</span>
+                            </div>
+                            <div class="indicator-row">
+                                <span class="indicator-label">Indicator:</span>
+                                <span class="indicator-value ${!isNA(prog.sdg.indicator) ? 'highlight' : ''}">${prog.sdg.indicator || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="indicator-group iso">
+                        <div class="indicator-header">📋 ISO (International Standards)</div>
+                        <div class="indicator-details">
+                            <div class="indicator-row">
+                                <span class="indicator-label">Theme:</span>
+                                <span class="indicator-value ${!isNA(prog.iso.theme) ? '' : 'na-value'}">${prog.iso.theme || 'N/A'}</span>
+                            </div>
+                            <div class="indicator-row">
+                                <span class="indicator-label">Indicator:</span>
+                                <span class="indicator-value ${!isNA(prog.iso.indicator) ? '' : 'na-value'}">${prog.iso.indicator || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="indicator-group sci">
+                        <div class="indicator-header">🏙️ SCI (Smart City Indicators)</div>
+                        <div class="indicator-details">
+                            <div class="indicator-row">
+                                <span class="indicator-label">Pillar:</span>
+                                <span class="indicator-value ${!isNA(prog.sci.pillar) ? '' : 'na-value'}">${!isNA(prog.sci.pillar) ? 'Pillar ' + prog.sci.pillar : 'N/A'}</span>
+                            </div>
+                            <div class="indicator-row">
+                                <span class="indicator-label">Component:</span>
+                                <span class="indicator-value ${!isNA(prog.sci.component) ? '' : 'na-value'}">${!isNA(prog.sci.component) ? 'Component ' + prog.sci.component : 'N/A'}</span>
+                            </div>
+                            <div class="indicator-row">
+                                <span class="indicator-label">Indicator:</span>
+                                <span class="indicator-value ${!isNA(prog.sci.indicator) ? '' : 'na-value'}">${prog.sci.indicator || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function renderPrograms() {
+            content.innerHTML = '';
+            
+            data.mainProgram.forEach((mainProg, index) => {
+                const mainDiv = document.createElement('div');
+                mainDiv.className = 'main-program';
+                
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'main-program-title';
+                titleDiv.innerHTML = `
+                    <span>${index + 1}. ${mainProg.title}</span>
+                    <span class="toggle-icon">▼</span>
+                `;
+                
+                const programsContent = document.createElement('div');
+                programsContent.className = 'programs-content';
+                
+                const programsGrid = document.createElement('div');
+                programsGrid.className = 'programs-grid';
+                
+                mainProg.programs.forEach(prog => {
+                    programsGrid.appendChild(createProgramCard(prog));
+                });
+                
+                programsContent.appendChild(programsGrid);
+                mainDiv.appendChild(titleDiv);
+                mainDiv.appendChild(programsContent);
+                content.appendChild(mainDiv);
+                
+                titleDiv.addEventListener('click', () => {
+                    titleDiv.classList.toggle('collapsed');
+                    programsContent.classList.toggle('collapsed');
+                });
+            });
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const programCards = document.querySelectorAll('.program-card');
+            
+            programCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        renderPrograms();
+    </script>
+</body>
+</html>
