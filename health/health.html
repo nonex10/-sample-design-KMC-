@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>स्वास्थ्य विभाग - काठमाडौं महानगरपालिका</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.2);
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .search-filter {
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-box input, .search-box select {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus, .search-box select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .sector-section {
+            margin-bottom: 30px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .sector-section:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .sector-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sector-header h2 {
+            font-size: 1.5em;
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s;
+        }
+
+        .sector-header.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .subsector-content {
+            display: none;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .subsector-content.active {
+            display: block;
+        }
+
+        .subsector {
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subsector-header {
+            background: #3f51b5;
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subsector-header:hover {
+            background: #303f9f;
+        }
+
+        .program-list {
+            display: none;
+            padding: 15px;
+        }
+
+        .program-list.active {
+            display: block;
+        }
+
+        .program-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .program-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .program-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .program-name {
+            font-weight: bold;
+            color: #1e3c72;
+            font-size: 1.1em;
+            flex: 1;
+        }
+
+        .program-budget {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .indicators {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .indicator-group {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+
+        .indicator-group.sdg {
+            border-left-color: #e74c3c;
+        }
+
+        .indicator-group.iso {
+            border-left-color: #3498db;
+        }
+
+        .indicator-group.sct {
+            border-left-color: #2ecc71;
+        }
+
+        .indicator-title {
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .indicator-value {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .relation-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+
+        .direct {
+            background: #27ae60;
+            color: white;
+        }
+
+        .indirect {
+            background: #f39c12;
+            color: white;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-box input, .search-box select {
+                min-width: 100%;
+            }
+
+            .indicators {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 स्वास्थ्य विभाग</h1>
+            <p>काठमाडौं महानगरपालिका - बजेट २०८२</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <h3 id="totalPrograms">125</h3>
+                <p>कुल कार्यक्रम</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalBudget">₹ 82.5 करोड</h3>
+                <p>कुल बजेट</p>
+            </div>
+            <div class="stat-card">
+                <h3>3</h3>
+                <p>मुख्य क्षेत्र</p>
+            </div>
+            <div class="stat-card">
+                <h3>15</h3>
+                <p>उपक्षेत्र</p>
+            </div>
+        </div>
+
+        <div class="search-filter">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 कार्यक्रम खोज्नुहोस्...">
+                <select id="subsectorFilter">
+                    <option value="">सबै उपक्षेत्र</option>
+                </select>
+                <select id="sdgFilter">
+                    <option value="">सबै SDG</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="content" id="contentArea">
+            <!-- Dynamic content will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        const healthData = {
+            department: "स्वास्थ्य विभाग",
+            sector: "सामाजिक विकास",
+            subsectors: [
+                {
+                    name: "सामुदायिक स्वास्थ्य सेवा",
+                    programs: [
+                        {
+                            name: "स्वास्थ्य प्रवर्द्धन केन्द्रको मासिक, अर्धवार्षिक र वार्षिक समिक्षा",
+                            budget: 500,
+                            sdg: { direct: "3.8(3.8.2)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "No", indirect: "NO" }
+                        },
+                        {
+                            name: "स्वास्थ्यजन्य औजार उपकरण मर्मत",
+                            budget: 1000,
+                            sdg: { direct: "3(3.d.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "No", indirect: "NO" }
+                        },
+                        {
+                            name: "डिजिटल कार्ड मार्फत स्वास्थ्य प्रवर्द्धन केन्द्रमा आउने सम्पूर्ण सेवाग्राहीहरुको डिजिटल हेल्थ प्रोफाइल तयार गर्ने",
+                            budget: 1000,
+                            sdg: { direct: "3.c(3.c.1)", indirect: "" },
+                            iso: { direct: "12.3,12.5,12.6", indirect: "" },
+                            sct: { direct: "Pillar 4/Component 4.5/I-071", indirect: "EMR adoption" }
+                        },
+                        {
+                            name: "शहरी स्वास्थ्य प्रवर्द्धन केन्द्रहरुमा अतिरिक्त समयमा तोकिएको स्वास्थ्य सेवा संचालन बापत सेवा खर्च",
+                            budget: 15000,
+                            sdg: { direct: "3.8(3.8.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "Pillar 1/Component 1.2/I-011", indirect: "Maternal and Child health" }
+                        },
+                        {
+                            name: "७० वर्ष माथिका ज्येष्ठ नागरिकहरुलाई घरमै आधारभूत स्वास्थ्य सेवा कार्यक्रम",
+                            budget: 3000,
+                            sdg: { direct: "3.8(3.8.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "12.1", indirect: "Pillar 1/Component 1.2/I-011, Elderly health" }
+                        }
+                    ]
+                },
+                {
+                    name: "खोप कार्यक्रम",
+                    programs: [
+                        {
+                            name: "राष्ट्रियस्तरको भिटामिन ए कार्यक्रम सञ्चालन तथा महिला स्वास्थ्य स्वयं सेविका थप प्रोत्साहन सहित परिचालन",
+                            budget: 4000,
+                            sdg: { direct: "3.8(3.8.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "No", indirect: "NO" }
+                        },
+                        {
+                            name: "जेष्ठ नागरिकहरुको लागि निमोनिया भ्याक्सिन कार्यक्रम",
+                            budget: 20000,
+                            sdg: { direct: "3.b(3.b.1)", indirect: "" },
+                            iso: { direct: "", indirect: "12" },
+                            sct: { direct: "12.1,12.4", indirect: "Elderly health" }
+                        },
+                        {
+                            name: "खोप सुदृढिकरण तथा पुर्ण खोप कार्यक्रम",
+                            budget: 2000,
+                            sdg: { direct: "3.8(3.8.1)", indirect: "" },
+                            iso: { direct: "", indirect: "12.4" },
+                            sct: { direct: "", indirect: "Pillar 1/Component 1.2/I-010, Immunization" }
+                        }
+                    ]
+                },
+                {
+                    name: "महिला स्वास्थ्य स्वयंसेविका",
+                    programs: [
+                        {
+                            name: "महिला स्वास्थ्य स्वयंसेविका चाडपर्व सुविधा",
+                            budget: 8200,
+                            sdg: { direct: "", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "No", indirect: "NO" }
+                        },
+                        {
+                            name: "महिला स्वास्थ्य स्वयंसेविका दिवस तथा अवकाश प्रोत्साहन कार्यक्रम",
+                            budget: 4000,
+                            sdg: { direct: "3(3.c.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "No", indirect: "NO" }
+                        },
+                        {
+                            name: "महिला स्वास्थ्य स्वयंसेविका क्षमता विकास कार्यक्रम तथा तालीम",
+                            budget: 1000,
+                            sdg: { direct: "3.c(3.c.1)", indirect: "" },
+                            iso: { direct: "12.3,12.5,12.6", indirect: "" },
+                            sct: { direct: "Pillar 1/Component 1.2/I-011", indirect: "Maternal and Child health" }
+                        }
+                    ]
+                },
+                {
+                    name: "क्यान्सर सेवा",
+                    programs: [
+                        {
+                            name: "प्रोष्टेट तथा अन्य क्यान्सर सम्बन्धी स्क्रिनिङ एवम् प्रारम्भिक उपचार",
+                            budget: 10000,
+                            sdg: { direct: "3.4(3.4.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "12.3,12.1", indirect: "Pillar 1/Component 1.1/I-003, NCD" }
+                        },
+                        {
+                            name: "स्तन, पाठेघर, सर्भिकल क्यान्सरको स्क्रिनिङ तथा प्रारम्भिक उपचारमा सरकारी अस्पतालसँगको सहकार्य",
+                            budget: 20000,
+                            sdg: { direct: "3.4(3.4.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "12.1", indirect: "Pillar 1/Component 1.1/I-003, NCD" }
+                        }
+                    ]
+                },
+                {
+                    name: "विपन्न नागरिक उपचार",
+                    programs: [
+                        {
+                            name: "महानगरबाट प्रदान गरिने नि:शुल्क एम्बुलेन्स सेवा सञ्चालन",
+                            budget: 28800,
+                            sdg: { direct: "3.8(3.8.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "12.1, 12.3", indirect: "Governance, Emergency response" }
+                        },
+                        {
+                            name: "विपन्न वर्गलाई नेपाल सरकारले दिने सहयोग सोधभर्ना कार्यक्रम",
+                            budget: 30000,
+                            sdg: { direct: "3.8(3.8.2)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "11", indirect: "Health and Well-being" }
+                        },
+                        {
+                            name: "विभिन्न ३५ वटा गाउँपालिकाहरुलाई मागका आधारमा एम्बुलेन्स अनुदान सहयोग",
+                            budget: 81000,
+                            sdg: { direct: "3.8(3.8.1)", indirect: "" },
+                            iso: { direct: "", indirect: "12.2" },
+                            sct: { direct: "", indirect: "Smart Governance" }
+                        }
+                    ]
+                },
+                {
+                    name: "शहरी स्वास्थ्य सेवा",
+                    programs: [
+                        {
+                            name: "स्वास्थ्य विमा कार्यक्रमको लागि औषधि खरिद",
+                            budget: 30000,
+                            sdg: { direct: "3.8(3.8.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "11", indirect: "Smart governance" }
+                        },
+                        {
+                            name: "निःशुल्क वितरणको लागि औषधि खरिद",
+                            budget: 20000,
+                            sdg: { direct: "3.b(3.b.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "11", indirect: "Smart governance" }
+                        },
+                        {
+                            name: "ल्यापटप ३५ थान, डेस्कटप ७० थान र प्रिन्टर ७० थान खरिद",
+                            budget: 15000,
+                            sdg: { direct: "3.8(3.8.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "12.2", indirect: "Digital Inclusion" }
+                        }
+                    ]
+                },
+                {
+                    name: "पोषणयुक्त आहार निर्माण",
+                    programs: [
+                        {
+                            name: "खाद्य स्वच्छता प्रवर्धन तथा प्रमाणिकरणका लागि Food Safety Boot Camp कार्यक्रम",
+                            budget: 2500,
+                            sdg: { direct: "", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "11", indirect: "Smart Governance" }
+                        },
+                        {
+                            name: "Safe Food Kathmandu अभियान सञ्चालन",
+                            budget: 2000,
+                            sdg: { direct: "", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "11", indirect: "Smart Governance" }
+                        },
+                        {
+                            name: "प्रयोगशाला उपकरण खरिद तथा संचालन",
+                            budget: 10000,
+                            sdg: { direct: "3.d(3.d.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "", indirect: "Health Infrastructure" }
+                        }
+                    ]
+                },
+                {
+                    name: "स्वस्थ जीवनशैली सम्बन्धी कार्यक्रम",
+                    programs: [
+                        {
+                            name: "आरोग्य जीवन परियोजना कार्यान्वयन",
+                            budget: 18000,
+                            sdg: { direct: "3.8(3.8.1)", indirect: "" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "", indirect: "Smart Governance" }
+                        },
+                        {
+                            name: "वायु गुणस्तर अनुगमन नेटवर्कका लागि बहुग्यास मोड्युलको खरिद, जडान तथा सञ्चालन",
+                            budget: 1000,
+                            sdg: { direct: "", indirect: "11" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "8", indirect: "Smart Governance" }
+                        },
+                        {
+                            name: "प्रदूषणमा सीमापार स्रोत सम्बन्धी अध्ययन तथा उपकरण खरिद",
+                            budget: 3000,
+                            sdg: { direct: "", indirect: "11" },
+                            iso: { direct: "", indirect: "" },
+                            sct: { direct: "8", indirect: "Environment" }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        function renderContent() {
+            const contentArea = document.getElementById('contentArea');
+            let html = '';
+            let subsectorOptions = new Set();
+            let sdgOptions = new Set();
+
+            healthData.subsectors.forEach((subsector, idx) => {
+                subsectorOptions.add(subsector.name);
+                
+                html += `
+                    <div class="sector-section">
+                        <div class="sector-header" onclick="toggleSection(${idx})">
+                            <h2>${subsector.name}</h2>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="subsector-content" id="section-${idx}">
+                            <div class="subsector">
+                                <div class="subsector-header" onclick="togglePrograms(${idx})">
+                                    <span>कार्यक्रमहरू (${subsector.programs.length})</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="program-list" id="programs-${idx}">
+                `;
+
+                subsector.programs.forEach(program => {
+                    if (program.sdg.direct) sdgOptions.add(program.sdg.direct);
+                    
+                    html += `
+                        <div class="program-card">
+                            <div class="program-header">
+                                <div class="program-name">${program.name}</div>
+                                <div class="program-budget">₹ ${program.budget.toLocaleString()} हजार</div>
+                            </div>
+                            <div class="indicators">
+                    `;
+
+                    if (program.sdg.direct || program.sdg.indirect) {
+                        html += `
+                            <div class="indicator-group sdg">
+                                <div class="indicator-title">🎯 SDG Indicators</div>
+                                <div class="indicator-value">
+                                    ${program.sdg.direct ? `<span class="relation-badge direct">Direct</span> ${program.sdg.direct}` : ''}
+                                    ${program.sdg.indirect ? `<br><span class="relation-badge indirect">Indirect</span> ${program.sdg.indirect}` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    if (program.iso.direct || program.iso.indirect) {
+                        html += `
+                            <div class="indicator-group iso">
+                                <div class="indicator-title">📊 ISO 37120</div>
+                                <div class="indicator-value">
+                                    ${program.iso.direct ? `<span class="relation-badge direct">Direct</span> ${program.iso.direct}` : ''}
+                                    ${program.iso.indirect ? `<br><span class="relation-badge indirect">Indirect</span> ${program.iso.indirect}` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    if (program.sct.direct !== 'No' || program.sct.indirect !== 'NO') {
+                        html += `
+                            <div class="indicator-group sct">
+                                <div class="indicator-title">🏙️ SCT 2025</div>
+                                <div class="indicator-value">
+                                    ${program.sct.direct !== 'No' ? `<span class="relation-badge direct">Direct</span> ${program.sct.direct}` : ''}
+                                    ${program.sct.indirect !== 'NO' ? `<br><span class="relation-badge indirect">Indirect</span> ${program.sct.indirect}` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            contentArea.innerHTML = html;
+
+            // Populate filters
+            const subsectorFilter = document.getElementById('subsectorFilter');
+            subsectorOptions.forEach(opt => {
+                subsectorFilter.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+
+            const sdgFilter = document.getElementById('sdgFilter');
+            sdgOptions.forEach(opt => {
+                sdgFilter.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+        }
+
+        function toggleSection(idx) {
+            const section = document.getElementById(`section-${idx}`);
+            const header = section.previousElementSibling;
+            section.classList.toggle('active');
+            header.classList.toggle('active');
+        }
+
+        function togglePrograms(idx) {
+            const programs = document.getElementById(`programs-${idx}`);
+            programs.classList.toggle('active');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', filterPrograms);
+        document.getElementById('subsectorFilter').addEventListener('change', filterPrograms);
+        document.getElementById('sdgFilter').addEventListener('change', filterPrograms);
+
+        function filterPrograms() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const subsectorFilter = document.getElementById('subsectorFilter').value;
+            const sdgFilter = document.getElementById('sdgFilter').value;
+
+            document.querySelectorAll('.program-card').forEach(card => {
+                const programName = card.querySelector('.program-name').textContent.toLowerCase();
+                const sectionEl = card.closest('.sector-section');
+                const subsectorName = sectionEl.querySelector('.sector-header h2').textContent;
+                const sdgText = card.textContent;
+
+                const matchesSearch = programName.includes(searchTerm);
+                const matchesSubsector = !subsectorFilter || subsectorName === subsectorFilter;
+                const matchesSDG = !sdgFilter || sdgText.includes(sdgFilter);
+
+                if (matchesSearch && matchesSubsector && matchesSDG) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Initialize
+        renderContent();
+
+        // Auto-expand first section
+        toggleSection(0);
+        togglePrograms(0);
+    </script>
+</body>
+</html>
