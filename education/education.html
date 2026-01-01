@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="ne">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>शिक्षा विभाग - काठमाडौं महानगरपालिका</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.2em;
+        opacity: 0.9;
+      }
+
+      .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 30px;
+        background: #f8f9fa;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .stat-card h3 {
+        color: #667eea;
+        font-size: 2em;
+        margin-bottom: 5px;
+      }
+
+      .stat-card p {
+        color: #666;
+        font-size: 0.9em;
+      }
+
+      .search-filter {
+        padding: 20px 30px;
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .search-box {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .search-box input,
+      .search-box select {
+        flex: 1;
+        min-width: 200px;
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1em;
+        transition: border-color 0.3s;
+      }
+
+      .search-box input:focus,
+      .search-box select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .content {
+        padding: 30px;
+      }
+
+      .sector-section {
+        margin-bottom: 30px;
+        border: 2px solid #e0e0e0;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s;
+      }
+
+      .sector-section:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      }
+
+      .sector-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .sector-header h2 {
+        font-size: 1.5em;
+      }
+
+      .toggle-icon {
+        font-size: 1.5em;
+        transition: transform 0.3s;
+      }
+
+      .sector-header.active .toggle-icon {
+        transform: rotate(180deg);
+      }
+
+      .subsector-content {
+        display: none;
+        padding: 20px;
+        background: #f8f9fa;
+      }
+
+      .subsector-content.active {
+        display: block;
+      }
+
+      .subsector {
+        margin-bottom: 20px;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .subsector-header {
+        background: #3f51b5;
+        color: white;
+        padding: 15px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .subsector-header:hover {
+        background: #303f9f;
+      }
+
+      .program-list {
+        display: none;
+        padding: 15px;
+      }
+
+      .program-list.active {
+        display: block;
+      }
+
+      .program-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        transition: all 0.3s;
+      }
+
+      .program-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-color: #667eea;
+      }
+
+      .program-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .program-name {
+        font-weight: bold;
+        color: #1e3c72;
+        font-size: 1.1em;
+        flex: 1;
+      }
+
+      .program-budget {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        white-space: nowrap;
+        margin-left: 10px;
+      }
+
+      .indicators {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .indicator-group {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        border-left: 4px solid;
+      }
+
+      .indicator-group.sdg {
+        border-left-color: #e74c3c;
+      }
+
+      .indicator-group.iso {
+        border-left-color: #3498db;
+      }
+
+      .indicator-group.sct {
+        border-left-color: #2ecc71;
+      }
+
+      .indicator-title {
+        font-weight: bold;
+        font-size: 0.85em;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+      }
+
+      .indicator-value {
+        font-size: 0.9em;
+        color: #555;
+      }
+
+      .relation-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.75em;
+        margin-left: 5px;
+        font-weight: bold;
+      }
+
+      .direct {
+        background: #27ae60;
+        color: white;
+      }
+
+      .indirect {
+        background: #f39c12;
+        color: white;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+        font-size: 1.2em;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 1.8em;
+        }
+
+        .stats-bar {
+          grid-template-columns: 1fr;
+        }
+
+        .search-box {
+          flex-direction: column;
+        }
+
+        .search-box input,
+        .search-box select {
+          min-width: 100%;
+        }
+
+        .indicators {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>शिक्षा विभाग</h1>
+        <p>काठमाडौं महानगरपालिका - बजेट २०८२</p>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-card">
+          <h3 id="totalPrograms">125</h3>
+          <p>कुल कार्यक्रम</p>
+        </div>
+        <div class="stat-card">
+          <h3 id="totalBudget">रु 82.5 करोड</h3>
+          <p>कुल बजेट</p>
+        </div>
+        <!-- <div class="stat-card">
+                <h3>3</h3>
+                <p>मुख्य क्षेत्र</p>
+            </div> -->
+        <div class="stat-card">
+          <h3>15</h3>
+          <p>उपक्षेत्र</p>
+        </div>
+      </div>
+
+      <div class="search-filter">
+        <div class="search-box">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 कार्यक्रम खोज्नुहोस्..."
+          />
+          <select id="subsectorFilter">
+            <option value="">सबै उपक्षेत्र</option>
+          </select>
+          <select id="sdgFilter">
+            <option value="">सबै SDG</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="content" id="contentArea">
+        <!-- Dynamic content will be loaded here -->
+      </div>
+    </div>
+
+    <script>
+      const healthData = {
+        department: "शिक्षा विभाग",
+        sector: "सामाजिक विकास",
+        subsectors: [
+          {
+            name: "विविध",
+            programs: [
+              {
+                name: "काठमाडौं महानगरपालिकाबाट कक्षा ९ र १० को अनुमति प्राप्त गरी सञ्चालनमा रहेको रानीदेवि माध्यमिक विद्यालयलाई विद्यालय सहायक (लेखापाल) तलब भत्ता अनुदान",
+                budget: 500,
+                sdg: { direct: "8.5.1", indirect: "NO" },
+                iso: {
+                  direct: "",
+                  indirect:
+                    "6.(EDUCATION)PRIMARY EDUCATION STUDENT-TEACHER RATIO ",
+                },
+                sci: {
+                  direct: "pillar no =2 componentno=2.5 I-026",
+                  indirect: "",
+                },
+              },
+              {
+                name: "स्रोत शिक्षकको सट्टामा रहने शिक्षकको तलब भत्ता",
+                budget: 1000,
+                sdg: { direct: "8.5.1", indirect: "NO" },
+                iso: {
+                  direct: "",
+                  indirect:
+                    "6.(EDUCATION)PRIMARY EDUCATION STUDENT-TEACHER RATIO ",
+                },
+                sci: {
+                  direct: "pillar no =2 componentno=2.5 I-027",
+                  indirect: "",
+                },
+              },
+              {
+                name: "प्रारम्भिक बालविकास सहजकर्ता, विद्यालय सहयोगी र विद्यालयमा लेखामा काम गर्ने विद्यालय सहायक पारिश्रमिकमा थप अनुदान (प्रारम्भिक बालविकास सहजकर्ताको १२००० र विद्यालय सहयोगीको प्रतिमहिना ११००० का दरले र विद्यालय सहायक (लेखापाल) को प्रतिमहिना ९००० का दरले थप गरी प्रारम्भिक बालविकास सहजकर्ताको २४०००, विद्यालय सहयोगीको २१००० र विद्यालय सहायक (लेखापाल) को २४००० का दरले प्रति महिना )",
+                budget: 1000,
+                sdg: { direct: "8.5.1", indirect: "NO" },
+                iso: {
+                  direct: "6.(EDUCATION) EXPENDITURE PER CAPITA",
+                  indirect:
+                    "6.(EDUCATION) Percentage of school-aged population enrolled in school",
+                },
+                sci: {
+                  direct: "pillar no =2 componentno=2.5 I-028",
+                  indirect: "",
+                },
+              },
+              {
+                name: "महानगरको आन्तरक स्रोतबाट व्यवस्थापन हुने विद्यालय सहायक इसीडी शिक्षक, आया, तलव, चाडपर्ब खर्च र पोषाक समेत (मासिक २४००० का दरले १२६ जना बालविकास सहजकर्ता र २१००० का दरले ८७ जना आयाको लागि)",
+                budget: 1000,
+                sdg: {
+                  direct:
+                    "6.(EDU)Number of teachers / education staff per 1,000 students",
+                  indirect: "NO",
+                },
+                iso: {
+                  direct:
+                    "6.(EDU)Number of teachers / education staff per 1,000 students",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "pillar no =2 componentno=2.5 I-029",
+                  indirect: "",
+                },
+              },
+              {
+                name: "सोधभर्ना आउने शिक्षकको तलव भत्ता",
+                budget: 15000,
+                sdg: { direct: "8.5.1", indirect: "" },
+                iso: {
+                  direct:
+                    "6.(EDU) महानगरको आन्तरिक स्रोतबाट विद्यालय सहायक, ECD शिक्षक, आया, तलब, चाडपर्ब खर्च तथा पोषाक खर्च",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "pillar no =2 componentno=2.5 I-030",
+                  indirect: "",
+                },
+              },
+              {
+                name: "विभागबाट सञ्चालन हुने विभागीय, विषयगत समिति , शिक्षा सरोकारवालाहरूसंग हुने छलफल अन्तक्रिया बैठक संचालन तथा व्यवस्थापन",
+                budget: 3000,
+                sdg: { direct: "NO", indirect: "NO" },
+                iso: {
+                  direct:
+                    "6.EDU-Number of teachers / education staff per 1,000 students",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "pillar no =2 componentno=2.5 I-031",
+                  indirect: "",
+                },
+              },
+              {
+                name: "शिक्षा समिति र शिक्षा तथा स्वास्थ्य समितिको बैठक भत्ता, खाना खाजा खर्च",
+                budget: 3000,
+                sdg: { direct: "8.5.1", indirect: "NO" },
+                iso: {
+                  direct: "NO",
+                  indirect: "6.EDU-Education policy and planning",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =2componentno=2.5I-026",
+                },
+              },
+            ],
+          },
+          {
+            name: "अनौपचारिक शिक्षा कार्यक्रम",
+            programs: [
+              {
+                name: "नेपाल भाषा अन्तर्गत अन्य स्थानीय समसामयिक बिषयबस्तु तथा परियति (नैतिक र Civic) शिक्षा पाठ्यबस्तु विस्तार",
+                budgetराष्ट्रि: 4000,
+                sdg: { direct: "4.1.1, 4.1.2", indirect: "4.7.1" },
+                iso: {
+                  direct:
+                    "6.EDU- (Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =2componentno=2.5I-026",
+                },
+              },
+              {
+                name: "नेपालभाषा तथा तामाङभाषा प्रशिक्षण सहायकको तलब भत्ता पारिश्रमिक (चाडपर्ब खर्च पोषाक खर्च र महंगीभत्ता सहित)",
+                budgetराष्ट्रि: 4000,
+                sdg: { direct: "8.5.1", indirect: "NO" },
+                iso: { direct: "NO", indirect: "NO" },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =1componentno=1.2I-007",
+                },
+              },
+              {
+                name: "स्काउट अन्तर्गतका बिद्यार्थीहरु लक्षित कार्यक्रम संचालन ",
+                budgetराष्ट्रि: 4000,
+                sdg: { direct: "4.7", indirect: "NO" },
+                iso: {
+                  direct:
+                    "6.EDU-(Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "pillar no =1componentno=1.2I-005",
+                  indirect: "",
+                },
+              },
+              {
+                name: "पुस्तक रहित शुक्रबार (Book Free Friday- कक्षा ९ शिक्षामा सिप ) कार्यान्वयनका लागि विद्यालयलाई अनुदान ",
+                budgetराष्ट्रि: 4000,
+                sdg: { direct: "4.6", indirect: "NO" },
+                iso: {
+                  direct:
+                    "6.EDU-(Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "pillar no =3componentno=3.9I-061",
+                  indirect: "",
+                },
+              },
+              {
+                name: "पुस्तक रहित शुक्रवार (Book Free Friday) अन्तर्गत संगीत विधाका कार्यक्रम सञ्चालन गर्न सांस्कृतिक संस्थान संग G to G",
+                budgetराष्ट्रि: 4000,
+                sdg: { direct: "4.7", indirect: "" },
+                iso: {
+                  direct:
+                    "6.EDU-(Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =1componentno=1.2I-006",
+                },
+              },
+            ],
+          },
+          {
+            name: "आधारभुत तह शिक्षा कार्यक्रम",
+            programs: [
+              {
+                name: "होम सेन्टर नपर्ने गरी कक्षा ८ को वार्षिक परीक्षा सञ्चालन तथा व्यवस्थापन (प्रश्नपत्र निर्माण, रोष्टर प्रशिक्षण,उत्तरपुस्तिका तथा प्रश्नपत्र छपाई, परीक्षण, बैठक सञ्चालन, अनुगमन, नतिजा प्रकाशन तथा प्रमाणिकरण)",
+                budget: 8200,
+                sdg: { direct: "4.1.2", indirect: "NO" },
+                iso: {
+                  direct: "NO",
+                  indirect: "6.EDU(Education policy and planning)",
+                },
+                sci: {
+                  direct: "pillar no =2componentno=2.5I-026",
+                  indirect: "",
+                },
+              },
+            ],
+          },
+          {
+            name: "पाठ्यक्रम र पाठ्यसामग्री वितरण कार्यक्रम",
+            programs: [
+              {
+                name: "नेपाल भाषाका पाठ्यपुस्तक छपाई तथा वितरण",
+                budget: 10000,
+                sdg: { direct: "4.6", indirect: "NO" },
+                iso: {
+                  direct:
+                    "6.EDU-(Access to free or affordable education materials and services)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =1componentno=1.2I-005",
+                },
+              },
+              {
+                name: "काठमाडौँको मौलिक सभ्यता समेटिएको संक्षिप्त पाठ्यक्रम तयार गरी कलेजहरुमा अतिरिक्त कक्षा संचालन",
+                budget: 20000,
+                sdg: { direct: "4.1", indirect: "NO" },
+                iso: {
+                  direct:
+                    "EDU-6 (Access to free or affordable education materials and services)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =3componentno=3.9I-061",
+                },
+              },
+            ],
+          },
+          {
+            name: "प्राविधिक शिक्षा तथा व्यवसायिक तालिम कार्यक्रम",
+            programs: [
+              {
+                name: "महानगरपालिकाको अनुमतिमा सञ्चालित प्राविधिकधार तर्फका विद्यालयहरुलाई सञ्चालन अनुदान पहिलो किस्ता (प्रति विद्यार्थी १५००० मध्ये ७५०० का दरले )",
+                budget: 28800,
+                sdg: { direct: "4.3", indirect: "8.6" },
+                iso: {
+                  direct:
+                    "6.EDU-(Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "pillar no =2 componentno=2.5 I-026",
+                  indirect: "",
+                },
+              },
+              {
+                name: "प्राविधिकधार तर्फका विद्यालयका प्रशिक्षक, सहायक प्रशिक्षक र शिक्षकको तलब भत्ता र कार्यक्रम अनुदान (८ विद्यालयमा सप्रशिक्षक १६ प्रशिक्षक १६ र ब प्रशिक्षक ३२ जनाकोलागि)",
+                budget: 30000,
+                sdg: { direct: "4.C", indirect: "NO" },
+                iso: {
+                  direct:
+                    "6.EDU-(Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =3componentno=3.9I-061",
+                },
+              },
+            ],
+          },
+          {
+            name: "विद्धार्थी प्रोत्साहन तथा छात्रवृत्ती कार्यक्रम",
+            programs: [
+              {
+                name: "सामुदायिक विद्यालयमा इसिडी देखि कक्षा ५ सम्म अध्ययनरत विद्यार्थीहरुको दिवा खाजाको लागि थप अनुदान (प्रतिदिन रु १५ प्रति विद्धार्थीको दरले)",
+                budget: 30000,
+                sdg: { direct: "2.1", indirect: "10" },
+                iso: {
+                  direct: "NO",
+                  indirect: "6.EDU(Education policy and planning)",
+                },
+                sci: {
+                  direct: "NO",
+                  indirect: "pillar no =2componentno=2.5I-026",
+                },
+              },
+              {
+                name: "सामुदायिक विद्यालयमा कक्षा ६ देखि १० सम्म अध्ययनरत विद्यार्थीहरुको दिवा खाजाको लागि विद्यालयलाई अनुदान (प्रतिदिन रु ३० प्रति विद्धार्थीको दरले)",
+                budget: 20000,
+                sdg: { direct: "2.1", indirect: "NO" },
+                iso: {
+                  direct: "NO",
+                  indirect: "6.EDU(Education policy and planning)",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =1componentno=1.2I-006",
+                },
+              },
+            ],
+          },
+          {
+            name: "शैक्षिक पूर्वाधार निर्माण कार्यक्रम",
+            programs: [
+              {
+                name: "छात्रवृत्ति लगायतको उत्तरपुस्तिका परीक्षण गर्ने OMR/OCR मेसिन स्यानर खरिद",
+                budget: 2500,
+                sdg: { direct: "NO", indirect: "4.A" },
+                iso: {
+                  direct:
+                    "6.EDU-(Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "pillar no =1componentno=1.2I-005",
+                  indirect: "",
+                },
+              },
+              {
+                name: "विद्यालय पूर्वाधार विकास कार्यक्रम",
+                budget: 2000,
+                sdg: { direct: "4.A", indirect: "9.C" },
+                iso: {
+                  direct:
+                    "6.EDU-(Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =1componentno=1.2I-006",
+                },
+              },
+              {
+                name: "सीप कार्यक्रम अन्तर्गत ल्याव निर्माणको लागि बिद्यालयलाई अनुदान",
+                budget: 10000,
+                sdg: { direct: "4.A", indirect: "" },
+                iso: {
+                  direct:
+                    "6.EDU-(Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "pillar no =1componentno=1.2I-007",
+                  indirect: "",
+                },
+              },
+              {
+                name: "डिजिटल शिक्षण सिकाइ सूचना प्रविधिमैत्री विद्यालय निर्माण",
+                budget: 10000,
+                sdg: { direct: "4.A", indirect: "" },
+                iso: {
+                  direct:
+                    "6.EDU-(Number of teachers / education staff per 1,000 students)",
+                  indirect: "NO",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =1componentno=1.2I-006",
+                },
+              },
+              {
+                name: "विद्यालय पूर्वाधार विकास कार्यक्रम",
+                budget: 10000,
+                sdg: { direct: "4.A", indirect: "9.C" },
+                iso: {
+                  direct: "NO",
+                  indirect: "6.EDU(Education policy and planning)",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =1componentno=1.2I-006",
+                },
+              },
+              {
+                name: "विद्यालय निर्माणका लागि गुरुयोजना तयारी",
+                budget: 10000,
+                sdg: { direct: "4.A", indirect: "" },
+                iso: {
+                  direct: "NO",
+                  indirect: "6.EDU(Education policy and planning)",
+                },
+                sci: {
+                  direct: "",
+                  indirect: "pillar no =3componentno=3.9I-061",
+                },
+              },
+            ],
+          },
+        ],
+      };
+
+      function renderContent() {
+        const contentArea = document.getElementById("contentArea");
+        let html = "";
+        let subsectorOptions = new Set();
+        let sdgOptions = new Set();
+
+        healthData.subsectors.forEach((subsector, idx) => {
+          subsectorOptions.add(subsector.name);
+
+          html += `
+        <div class="sector-section">
+            <div class="sector-header" onclick="toggleSection(${idx})">
+                <h2>${subsector.name}</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="subsector-content" id="section-${idx}">
+                <div class="subsector">
+                    <div class="subsector-header" onclick="togglePrograms(${idx})">
+                        <span>कार्यक्रमहरू (${subsector.programs.length})</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="program-list" id="programs-${idx}">
+        `;
+
+          subsector.programs.forEach((program) => {
+            if (program.sdg?.direct) sdgOptions.add(program.sdg.direct);
+
+            const budgetValue = program.budget ?? 0;
+
+            html += `
+            <div class="program-card">
+                <div class="program-header">
+                    <div class="program-name">${program.name}</div>
+                    <div class="program-budget">रु ${budgetValue.toLocaleString()} हजार</div>
+                </div>
+
+                <div class="indicators">
+            `;
+
+            if (program.sdg && (program.sdg.direct || program.sdg.indirect)) {
+              html += `
+                <div class="indicator-group sdg">
+                    <div class="indicator-title">🎯 SDG</div>
+                    <div class="indicator-value">
+                        ${
+                          program.sdg.direct
+                            ? `<span class="relation-badge direct">Direct</span> ${program.sdg.direct}`
+                            : ""
+                        }
+                        ${
+                          program.sdg.indirect
+                            ? `<br><span class="relation-badge indirect">Indirect</span> ${program.sdg.indirect}`
+                            : ""
+                        }
+                    </div>
+                </div>`;
+            }
+
+            if (program.iso && (program.iso.direct || program.iso.indirect)) {
+              html += `
+                <div class="indicator-group iso">
+                    <div class="indicator-title">📊 ISO 37120</div>
+                    <div class="indicator-value">
+                        ${
+                          program.iso.direct
+                            ? `<span class="relation-badge direct">Direct</span> ${program.iso.direct}`
+                            : ""
+                        }
+                        ${
+                          program.iso.indirect
+                            ? `<br><span class="relation-badge indirect">Indirect</span> ${program.iso.indirect}`
+                            : ""
+                        }
+                    </div>
+                </div>`;
+            }
+
+            if (program.sci && (program.sci.direct || program.sci.indirect)) {
+              html += `
+                <div class="indicator-group sct">
+                    <div class="indicator-title">🏙️ SCI</div>
+                    <div class="indicator-value">
+                        ${
+                          program.sci.direct
+                            ? `<span class="relation-badge direct">Direct</span> ${program.sci.direct}`
+                            : ""
+                        }
+                        ${
+                          program.sci.indirect
+                            ? `<br><span class="relation-badge indirect">Indirect</span> ${program.sci.indirect}`
+                            : ""
+                        }
+                    </div>
+                </div>`;
+            }
+
+            html += `
+                </div>
+            </div>`;
+          });
+
+          html += `
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        });
+
+        contentArea.innerHTML = html;
+
+        const subsectorFilter = document.getElementById("subsectorFilter");
+        subsectorOptions.forEach((s) => {
+          subsectorFilter.innerHTML += `<option value="${s}">${s}</option>`;
+        });
+
+        const sdgFilter = document.getElementById("sdgFilter");
+        sdgOptions.forEach((s) => {
+          sdgFilter.innerHTML += `<option value="${s}">${s}</option>`;
+        });
+      }
+
+      function toggleSection(idx) {
+        document.getElementById(`section-${idx}`).classList.toggle("active");
+      }
+
+      function togglePrograms(idx) {
+        document.getElementById(`programs-${idx}`).classList.toggle("active");
+      }
+
+      renderContent();
+      toggleSection(0);
+      togglePrograms(0);
+    </script>
+  </body>
+</html>
